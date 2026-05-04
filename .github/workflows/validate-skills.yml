@@ -1,0 +1,38 @@
+name: Validate skills
+
+on:
+  push:
+    paths:
+      - utils-skills/**
+      - .github/workflows/validate-skills.yml
+  pull_request:
+    paths:
+      - utils-skills/**
+      - .github/workflows/validate-skills.yml
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        skill:
+          - utils-skills/write-a-prd
+          - utils-skills/prd-to-plan
+          - utils-skills/do-work
+          - utils-skills/write-a-skill
+          - utils-skills/find-skills
+          - utils-skills/grill-me
+          - utils-skills/handle-coderabbit
+          - utils-skills/bun-integration-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Validate Agent Skill spec
+        run: uvx --from skills-ref agentskills validate "${{ matrix.skill }}"
