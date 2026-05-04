@@ -11,7 +11,7 @@ Applies the integration test pattern to any Bun + TypeScript repo.
 - ORM: Prisma (`db` client via `@/lib/clients/db` or similar)
 - HTTP framework: Elysia → Eden Treaty client
 - Test runner: `bun:test`
-- Env injection: `infisical run --` (skip if no `.infisical.json` present)
+- Env injection: project-specific env loader if present (for example `dotenvx run --`, `doppler run --`, `op run --`, or any repo-defined wrapper); otherwise run Bun directly
 - External mocks: only for queue (QStash-style) and storage (S3-style) if present
 
 ---
@@ -22,7 +22,7 @@ Read these files before generating anything:
 
 1. `prisma/schema.prisma` → entity names + foreign key dependency order
 2. `src/index.ts` or `src/app.ts` → detect HTTP framework
-3. `package.json` → existing test scripts, infisical presence
+3. `package.json` → existing test scripts and env-loading convention
 4. `src/lib/clients/` or equivalent → find the db import path and any queue/storage clients
 
 If Prisma schema is absent, ask the user what ORM they use before proceeding.
@@ -87,14 +87,14 @@ Add these scripts (adapt paths as needed):
 {
   "test": "bun run test:hermetic",
   "test:hermetic": "bun test --timeout 20000 src/**/*.spec.ts",
-  "test:integration": "<infisical> bun test --timeout 20000 tests/integration/",
+  "test:integration": "<env-loader> bun test --timeout 20000 tests/integration/",
   "test:integration:ci": "bun test --timeout 20000 tests/integration/"
 }
 ```
 
 - `test:hermetic`: pure unit/model tests, no DB, no env needed
-- `test:integration`: hits real DB, needs env — prefix with `infisical run --` if `.infisical.json` exists
-- `test:integration:ci`: same glob without infisical (CI injects env directly)
+- `test:integration`: hits real DB and needs env — prefix with the repo's env loader if one exists; otherwise use `bun test` directly
+- `test:integration:ci`: same glob without a local env loader when CI injects env directly
 
 If the repo uses Turbo, also add the task to `turbo.json` under `test:integration:ci`.
 

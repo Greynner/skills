@@ -16,7 +16,7 @@ Sets up Bun integration test infrastructure for TypeScript repos. Covers `setup.
 | ORM | Prisma | Drizzle |
 | HTTP framework | Elysia (Eden Treaty) | Hono, plain fetch |
 | Test runner | `bun:test` | — |
-| Env injection | `infisical run --` | skipped if no `.infisical.json` |
+| Env injection | Project-specific env loader | optional; use direct `bun test` if none exists |
 | External mocks | Queue (QStash), Storage (S3) | only if present |
 
 ## Install
@@ -43,7 +43,7 @@ src/lib/test-utils/
 {
   "test": "bun run test:hermetic",
   "test:hermetic": "bun test --timeout 20000 src/**/*.spec.ts",
-  "test:integration": "<infisical> bun test --timeout 20000 tests/integration/",
+  "test:integration": "<env-loader> bun test --timeout 20000 tests/integration/",
   "test:integration:ci": "bun test --timeout 20000 tests/integration/"
 }
 ```
