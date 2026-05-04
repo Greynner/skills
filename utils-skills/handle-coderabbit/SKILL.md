@@ -1,28 +1,79 @@
 ---
 name: handle-coderabbit
-description: Use when the user wants to triage, respond to, or apply CodeRabbit pull request review comments.
+description: Fetch and address CodeRabbit review comments on a pull request. Use when CodeRabbit has reviewed a PR and left comments to resolve, when the user says "handle coderabbit", "address review comments", or "fix coderabbit feedback".
 ---
 
-# handle-coderabbit
+# Handle CodeRabbit
 
-Help process CodeRabbit review feedback efficiently.
+Read all CodeRabbit review comments on the current PR, address each one with code changes, validate, and push.
 
 ## Workflow
 
-1. Gather the review comments and the relevant diff.
-2. Classify each comment as: must fix, nice to have, question, or false positive.
-3. Apply safe fixes directly when the codebase confirms the recommendation.
-4. Avoid mechanical changes that conflict with project conventions.
-5. For rejected comments, draft a short explanation.
-6. Run relevant validation after edits.
+### 1. Identify the PR
 
-## Response style
+If no PR number is given, derive it from the current branch:
 
-Summarize:
+```bash
+gh pr view --json number,url,headRefName
+```
 
-- comments addressed
-- comments skipped and why
-- files changed
-- validation run
+### 2. Fetch CodeRabbit comments
 
-Ask before making broad refactors that go beyond the review.
+Pull all review comments left by the CodeRabbit bot:
+
+```bash
+gh pr view <number> --json reviews,comments
+gh api repos/{owner}/{repo}/pulls/<number>/comments --jq '.[] | select(.user.login | startswith("coderabbitai")) | {id, path, line, body}'
+gh api repos/{owner}/{repo}/pulls/<number>/reviews --jq '.[] | select(.user.login | startswith("coderabbitai")) | {id, body, state}'
+```
+
+Also check the general PR review body (CodeRabbit posts a summary review with actionable items):
+
+```bash
+gh api repos/{owner}/{repo}/pulls/<number>/reviews --jq '.[] | select(.user.login | startswith("coderabbitai")) | .body'
+```
+
+### 3. Triage comments
+
+Group comments by category:
+
+- **Actionable** — code changes needed (bugs, style, logic issues, missing tests)
+- **Nitpicks** — optional, address only if quick
+- **Questions/clarifications** — may need a reply instead of a code change
+
+Skip comments marked `[LGTM]` or already resolved.
+
+### 4. Address each actionable comment
+
+For each comment:
+
+1. Read the referenced file at the referenced line
+2. Understand what CodeRabbit is asking
+3. Make the minimal change that resolves the issue
+4. Do not refactor surrounding code or gold-plate the fix
+
+### 5. Validate
+
+```bash
+bun run typecheck
+bun run test
+```
+
+Fix any regressions before continuing.
+
+### 6. Commit and push
+
+```bash
+git add <changed files>
+git commit -m "fix(review): fix explanation"
+git push
+```
+
+### 7. Reply to addressed comments (optional)
+
+If the user wants to close the loop, reply to each resolved comment:
+
+```bash
+gh api repos/{owner}/{repo}/pulls/<number>/comments/<comment_id>/replies \
+  -f body="Addressed in latest commit."
+```

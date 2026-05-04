@@ -1,38 +1,60 @@
 ---
 name: write-a-prd
-description: Use when the user wants to write, review, or refine a Product Requirements Document for a feature or product change.
+description: Create a detailed PRD from problem exploration, codebase review, and structured interviews with the user. Use when the user wants to create a PRD, product requirements document, or feature spec before implementation.
 ---
 
-# write-a-prd
+This skill will be invoked when the user wants to create a PRD. You should go through the steps below. You may skip steps if you don't consider them necessary.
 
-Help the user turn an idea into a clear PRD that is useful for design, engineering, and QA.
+1. Ask the user for a long, detailed description of the problem they want to solve and any potential ideas for solutions.
 
-## Workflow
+2. Explore the repo to verify their assertions and understand the current state of the codebase.
 
-1. Clarify the problem, target users, desired outcome, constraints, and deadline.
-2. Separate goals from non-goals.
-3. Describe the current state and the proposed future state.
-4. Define user stories or key flows.
-5. Write functional requirements with acceptance criteria.
-6. Add edge cases, error states, permissions, analytics, rollout, and open questions.
-7. Keep the document specific enough for planning, but avoid implementation details unless the user asks.
+3. Interview the user relentlessly about every aspect of this plan until you reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 
-## Output format
+4. Once you have a complete understanding of the problem and solution, use the template below to write the PRD. The PRD should be written in the `plans/prd-name.md` file.
 
-Use this structure by default:
+<prd-template>
 
-- Title
-- Summary
-- Problem
-- Goals
-- Non-goals
-- Users / personas
-- User flows
-- Requirements
-- Acceptance criteria
-- Edge cases
-- Metrics
-- Rollout plan
-- Open questions
+## Problem Statement
 
-If important context is missing, ask focused questions before drafting.
+The problem that the user is facing, from the user's perspective.
+
+## Solution
+
+The solution to the problem, from the user's perspective.
+
+## User Stories
+
+A LONG, numbered list of user stories. Each user story should be in the format of:
+
+1. As an <actor>, I want a <feature>, so that <benefit>
+
+<user-story-example>
+1. As a mobile bank customer, I want to see balance on my accounts, so that I can make better informed decisions about my spending
+</user-story-example>
+
+This list of user stories should be extremely extensive and cover all aspects of the feature.
+
+## Implementation Decisions
+
+A list of implementation decisions that were made. This can include:
+
+- The modules that will be built/modified
+- The interfaces of those modules that will be modified
+- Technical clarifications from the developer
+- Architectural decisions
+- Schema changes
+- API contracts
+- Specific interactions
+
+Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
+
+## Out of Scope
+
+A description of the things that are out of scope for this PRD.
+
+## Further Notes
+
+Any further notes about the feature.
+
+</prd-template>

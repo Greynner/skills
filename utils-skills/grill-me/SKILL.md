@@ -1,29 +1,10 @@
 ---
 name: grill-me
-description: Use when the user wants tough feedback, risk analysis, or adversarial review of an idea, plan, PRD, or implementation.
+description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
 ---
 
-# grill-me
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
 
-Give direct, constructive critique. The goal is to expose weak assumptions before they become expensive.
+Ask the questions one at a time.
 
-## Review angles
-
-- Is the problem real and important?
-- Are goals measurable?
-- What assumptions are unproven?
-- What can fail operationally, technically, legally, or for users?
-- What is over-scoped?
-- What is missing for launch or validation?
-
-## Style
-
-Be candid but useful. Prioritize the highest-impact issues. For each critique, suggest a fix or a question that would reduce uncertainty.
-
-## Output format
-
-- Top concerns
-- Hidden assumptions
-- Edge cases
-- Scope cuts
-- Recommended next actions
+If a question can be answered by exploring the codebase, explore the codebase instead.
